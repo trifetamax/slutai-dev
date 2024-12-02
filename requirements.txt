@@ -1,0 +1,14 @@
+flask>=1.1.2
+transformers>=4.0.0
+torch>=1.6.0
+steel-integration>=0.0.1
+dotenv>=0.0.5
+steel>=0.0.1
+tweepy>=3.10.0
+lxml
+numpy
+weblinx[eval]>=0.3.0.rc1
+streamlit
+sentence-transformers
+playwright
+browsergym

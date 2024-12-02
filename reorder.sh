@@ -9,14 +9,20 @@ for commit in $sorted_commits; do
     echo "pick $commit $(git log -1 --pretty=%B $commit | tr -d '\n')" >> "$temp_file"
 done
 
-# Perform the rebase and resolve conflicts automatically
+# Perform the rebase and auto-create new commits with the same message on conflicts
 GIT_SEQUENCE_EDITOR="cat $temp_file >" git rebase --root -i || {
-    echo "Rebase failed. Resolving conflicts..."
+    echo "Rebase failed. Auto-resolving conflicts..."
     while ! git rebase --continue; do
-        # Keep the current version of conflicting files
+        # Automatically stage all changes
         git status | grep "both modified" | awk '{print $NF}' | xargs git checkout --theirs --quiet
         git status | grep "both deleted" | awk '{print $NF}' | xargs git rm --quiet
         git add .
+
+        # Get the commit message of the current commit
+        commit_message=$(git log -1 --pretty=%B)
+
+        # Create a new commit with the same message
+        git commit --no-edit --amend -m "$commit_message" --quiet
     done
 }
 
